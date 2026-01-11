@@ -1,0 +1,23 @@
+# Default config for the MCP-based market analysis tools
+# Copy to env/config.yaml and edit for your environment.
+
+http:
+  user_agent: "market-analysis-mcp/0.1"
+  timeout_seconds: 10
+  max_content_length: 5_000_000   # bytes; defensive guard
+  allow_domains:
+    - "ces.tech"
+    - "nvidia.com"
+    - "qualcomm.com"
+    - "samsung.com"
+    - "sony.com"
+    - "theverge.com"
+    - "techcrunch.com"
+
+paths:
+  reports_dir: "reports"
+  sources_dir: "sources"
+
+excerpts:
+  max_chars: 500
+  default_position: "unknown"
