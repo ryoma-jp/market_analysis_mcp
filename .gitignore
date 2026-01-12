@@ -6,3 +6,6 @@ reports/
 sources/
 .envrc
 .mypy_cache/
+
+.vscode/
+env/config.yaml

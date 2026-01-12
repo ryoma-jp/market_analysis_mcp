@@ -42,7 +42,7 @@ def load_config(path: Optional[str] = None) -> AppConfig:
         if path
         else Path(os.getenv("APP_CONFIG", "env/config.yaml"))
     )
-    if not cfg_path.exists():
+    if (not cfg_path.exists()) or (not cfg_path.is_file()):
         return AppConfig()
     with cfg_path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}

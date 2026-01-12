@@ -13,19 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
-
-      - name: Install dependencies
+      - name: Build test image
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r env/requirements.txt -r env/requirements-dev.txt
+          docker build -f env/Dockerfile.test -t market-analysis-mcp-test .
 
-      - name: Run tests
-        env:
-          PYTHONPATH: "${{ github.workspace }}"
+      - name: Run tests (Docker)
         run: |
-          python -m pytest -q
+          docker run --rm market-analysis-mcp-test

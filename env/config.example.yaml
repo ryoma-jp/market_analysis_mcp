@@ -6,6 +6,8 @@ http:
   timeout_seconds: 10
   max_content_length: 5_000_000   # bytes; defensive guard
   allow_domains:
+    - "ascii.jp"
+    - "www.ascii.jp"
     - "ces.tech"
     - "nvidia.com"
     - "qualcomm.com"

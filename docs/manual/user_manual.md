@@ -1,9 +1,11 @@
 # 技術動向調査エージェント（Market Analysis MCP）: ユーザマニュアル
 
-このプロジェクトは、業界/技術動向調査のための **MCP（に近い）ツールサーバ** を提供します。
-現時点では、開発用途の最小構成として **stdio（標準入出力）でのNDJSONプロトコル** によりツール呼び出しが可能です。
+このプロジェクトは、業界/技術動向調査のための **MCP stdioツールサーバ** を提供します。
+既存のツール実装を、公式MCP（Python SDK）として公開し、Copilot Chat（Agent/Tools）などのMCPクライアントから呼び出せます。
 
-> 補足: 実装は「MCPフレームワーク」そのものではなく、置き換え可能な最小のstdioループです。
+補足:
+- 公式MCP stdioサーバ入口: `python -m src.mcp_server`
+- 旧 `python -m src.main` は開発用途の最小NDJSONプロトコルで、MCPクライアントとは互換ではありません。
 
 ## できること
 - Webページを取得し（allowlistで制限可能）、HTMLを返す
@@ -37,7 +39,7 @@ docker run --rm market-analysis-mcp-test
 
 ```bash
 docker build -f env/Dockerfile -t market-analysis-mcp .
-docker run --rm -i market-analysis-mcp python -m src.main
+docker run --rm -i market-analysis-mcp python -m src.mcp_server
 ```
 
 > stdioサーバなので、`-i`（stdinを開く）を付けて入力できるようにします。
@@ -92,10 +94,12 @@ cp env/config.example.yaml env/config.yaml
 リポジトリルートで次を実行します。
 
 ```bash
-python -m src.main
+python -m src.mcp_server
 ```
 
-このプロセスは標準入力から **1行=1JSON（NDJSON）** を受け取り、標準出力に同様の形式で返します。
+このプロセスはMCPクライアント（Copilot Chat等）から接続され、ツールがMCP経由で実行されます。
+
+> 旧NDJSONプロトコル（`python -m src.main`）は下記に残しています（開発・デバッグ用途）。
 
 ## サーバの終了方法
 
@@ -110,7 +114,7 @@ stdioサーバのため、終了方法は「入力の終了」または「プロ
 	- `docker run --rm -i ...` のターミナルで `Ctrl+C` するとコンテナが停止します。
 	- 別ターミナルから止める場合は `docker stop <container_id>` を使用します。
 
-## 利用方法（NDJSONプロトコル）
+## 利用方法（旧NDJSONプロトコル / 開発用）
 
 ### 1. ツール一覧の取得
 

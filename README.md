@@ -1,9 +1,11 @@
 # market_analysis_mcp
 
-業界/技術動向調査を行うための **MCPサーバ（開発用の最小stdio実装）** です。
+業界/技術動向調査を行うための **MCP stdioサーバ** です。
 Web取得・本文抽出・根拠抜粋・成果物保存のツール群を提供し、エージェント（例: GitHub Copilot のカスタムエージェント）から呼び出すことを想定しています。
 
-> 現時点では「MCPフレームワークそのもの」ではなく、置き換え可能な最小のstdio NDJSONプロトコル実装です。
+補足:
+- 公式MCP（Python SDK）によるstdioサーバ入口は `python -m src.mcp_server` です。
+- 旧 `python -m src.main` は開発用の最小NDJSONプロトコルで、CopilotのMCP Tools接続とは互換ではありません。
 
 ## QuickStart（Docker推奨）
 
@@ -18,7 +20,7 @@ docker run --rm market-analysis-mcp-test
 
 ```bash
 docker build -f env/Dockerfile -t market-analysis-mcp .
-docker run --rm -i market-analysis-mcp python -m src.main
+docker run --rm -i market-analysis-mcp python -m src.mcp_server
 ```
 
 終了方法:
@@ -29,6 +31,8 @@ docker run --rm -i market-analysis-mcp python -m src.main
 
 ```bash
 printf '%s\n' '{"action":"list_tools"}' | docker run --rm -i market-analysis-mcp python -m src.main
+
+> 上の疎通確認は「旧NDJSONサーバ（`src.main`）」向けです。公式MCPサーバ（`src.mcp_server`）は、MCPクライアント（例: Copilot Chat のTools接続）から呼び出してください。
 ```
 
 ## 設定（config）

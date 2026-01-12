@@ -122,10 +122,43 @@ def extract_main_text(
     main_html = doc.summary(html_partial=True)
     title = doc.short_title()
 
-    soup = BeautifulSoup(main_html, "lxml")
-    text = soup.get_text("\n", strip=True)
-    published_date = _extract_published_date(soup)
-    publisher = _extract_publisher(soup, base_url)
+    summary_soup = BeautifulSoup(main_html, "lxml")
+    full_soup = BeautifulSoup(html, "lxml")
+
+    text = summary_soup.get_text("\n", strip=True)
+
+    if not (title and title.strip()):
+        page_title = (
+            full_soup.title.get_text(strip=True) if full_soup.title else ""
+        )
+        title = page_title or title
+
+    published_date = _extract_published_date(
+        summary_soup
+    ) or _extract_published_date(full_soup)
+    publisher = _extract_publisher(full_soup, base_url) or _extract_publisher(
+        summary_soup, base_url
+    )
+
+    # Fallbacks for JS-heavy pages where readability returns an empty summary
+    if not text:
+        for attrs in (
+            {"name": "description"},
+            {"property": "og:description"},
+            {"name": "twitter:description"},
+        ):
+            meta = full_soup.find("meta", attrs=attrs)
+            content = meta.get("content") if meta else None
+            if content:
+                text = content.strip()
+                break
+
+    if not text:
+        main = full_soup.find("main") or full_soup.find("body")
+        if main:
+            for tag in main.find_all(["script", "style", "noscript"]):
+                tag.decompose()
+            text = main.get_text("\n", strip=True)
 
     return ExtractResult(
         title=title or None,
